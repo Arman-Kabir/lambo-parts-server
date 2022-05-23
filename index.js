@@ -32,18 +32,25 @@ async function run() {
             res.send(parts);
         })
         // get a single parts
-        app.get('/parts/:id', async (req,res)=>{
+        app.get('/parts/:id', async (req, res) => {
             const id = req.params.id;
-            console.log(id);
-            const query = {_id:ObjectId(id)};
+            // console.log(id);
+            const query = { _id: ObjectId(id) };
             const singleParts = await partsCollection.findOne(query);
             res.send(singleParts);
 
         })
+        // get orders of a specific user
+        app.get('/orders', async (req, res) => {
+            const user = req.query.userEmail;
+            const query = {userEmail:user};
+            const orders= await orderCollection.find(query).toArray();
+            res.send(orders);
+        })
         // order parts
-        app.post('/orders', async(req,res)=>{
+        app.post('/orders', async (req, res) => {
             const orders = req.body;
-            const result =  await orderCollection.insertOne(orders);
+            const result = await orderCollection.insertOne(orders);
             res.send(result);
         })
 
