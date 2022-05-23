@@ -18,10 +18,12 @@ async function run() {
         await client.connect();
         // console.log('db connected 2nd')
         const partsCollection = client.db('lambo-parts').collection('parts');
+        const orderCollection = client.db('lambo-parts').collection('orders');
 
 
 
         // console.log(partsCollection);
+
 
         // get all parts
         app.get('/parts', async (req, res) => {
@@ -37,6 +39,12 @@ async function run() {
             const singleParts = await partsCollection.findOne(query);
             res.send(singleParts);
 
+        })
+        // order parts
+        app.post('/orders', async(req,res)=>{
+            const orders = req.body;
+            const result =  await orderCollection.insertOne(orders);
+            res.send(result);
         })
 
 
