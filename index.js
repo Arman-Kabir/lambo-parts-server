@@ -44,6 +44,7 @@ async function run() {
         const partsCollection = client.db('lambo-parts').collection('parts');
         const orderCollection = client.db('lambo-parts').collection('orders');
         const userCollection = client.db('lambo-parts').collection('users');
+        const paymentCollection = client.db('lambo-parts').collection('payment');
 
 
 
@@ -152,12 +153,29 @@ async function run() {
             res.send(result);
         })
 
-        // get a order for payment
+        // payment updated api order
+        app.patch('/orders/:id',verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            // console.log(id);
+            const transaction = req.body;
+            const filter = { _id: ObjectId(id) };
+            const updatedDoc = {
+                $set: {
+                    payment: 'true',
+                    transactionId: transaction.transactionId,
+                }
+            }
+            const result = await paymentCollection.insertOne(transaction);
+            const updatedOrder= await orderCollection.updateOne(filter,updatedDoc);
+            res.send(updatedDoc);
+        })
+
+        // get an order for payment
         app.get('/order/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const order = await orderCollection.findOne(query);
-            console.log(order);
+            // console.log(order);
             res.send(order);
         })
 
