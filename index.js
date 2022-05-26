@@ -118,6 +118,7 @@ async function run() {
         })
 
 
+        // parts
         // get all parts
         app.get('/parts', async (req, res) => {
             // const query = {};
@@ -133,6 +134,23 @@ async function run() {
             res.send(singleParts);
 
         })
+
+
+
+        // orders
+        // get all orders for admin
+        app.get('/allorders', verifyJWT, async (req, res) => {
+            const result = await orderCollection.find().toArray();
+            res.send(result);
+        })
+        // delete an order ffom admin
+        app.delete('/allorders/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await orderCollection.deleteOne(query);
+            res.send(result);
+        })
+
         // get orders of a specific user // 
         app.get('/orders', verifyJWT, async (req, res) => {
             const user = req.query.userEmail;
@@ -184,6 +202,7 @@ async function run() {
 
 
 
+        //   review
         // add review api
         app.post('/review', async (req, res) => {
             const review = req.body;
@@ -197,6 +216,8 @@ async function run() {
         })
 
 
+
+        // my profile
         // add to my profile api
         app.post('/profile', async (req, res) => {
             const profile = req.body;
