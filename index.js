@@ -125,6 +125,15 @@ async function run() {
             const parts = await partsCollection.find().toArray();
             res.send(parts);
         })
+        // post to parts
+        app.post('/parts', async (req, res) => {
+            const product = req.body;
+            console.log(product);
+            // const query = {};
+            const result = await partsCollection.insertOne(product);
+            res.send(result);
+        })
+
         // get a single parts
         app.get('/parts/:id', async (req, res) => {
             const id = req.params.id;
@@ -135,9 +144,9 @@ async function run() {
 
         })
         // delete a parts // verifyjwt
-        app.delete('/parts/:id', async(req, res) => {
+        app.delete('/parts/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id:ObjectId(id)};
+            const query = { _id: ObjectId(id) };
             const result = await partsCollection.deleteOne(query);
             res.send(result);
         })
@@ -150,11 +159,24 @@ async function run() {
             const result = await orderCollection.find().toArray();
             res.send(result);
         })
-        // delete an order ffom admin
+
+        // delete an order for admin
         app.delete('/allorders/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await orderCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        // update status of an order for admin
+        app.put('/allorders/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const updateDoc = {
+                $set: { status: 'shipped' },
+            };
+
+            const result = await orderCollection.updateOne(filter, updateDoc);
             res.send(result);
         })
 
@@ -226,9 +248,39 @@ async function run() {
 
         // my profile
         // add to my profile api
-        app.post('/profile', async (req, res) => {
+        app.post('/profile/:email', async (req, res) => {
+            const email = req.params.email;
             const profile = req.body;
+            const filter = { email: email };
+            // const options = { upsert: true };
+            // const updateDoc = {
+            //     $set: {
+            //         profile
+            //     },
+            // };
+            // console.log(profile, filter, updateDoc);
             const result = await profileCollection.insertOne(profile);
+            res.send(result);
+        })
+
+        // update to my profile api
+        app.put('/profile/:email', async (req, res) => {
+            const email = req.params.email;
+            const profile = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    name: profile.name,
+                    email: profile.email,
+                    education: profile.education,
+                    location: profile.location,
+                    phone: profile.phone,
+                    linkedin: profile.linkedin,
+                },
+            };
+            // console.log(profile, filter, updateDoc);
+            const result = await profileCollection.updateOne(filter, updateDoc, options);
             res.send(result);
         })
 
