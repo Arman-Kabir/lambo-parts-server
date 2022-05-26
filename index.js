@@ -45,6 +45,7 @@ async function run() {
         const orderCollection = client.db('lambo-parts').collection('orders');
         const userCollection = client.db('lambo-parts').collection('users');
         const paymentCollection = client.db('lambo-parts').collection('payment');
+        const reviewCollection = client.db('lambo-parts').collection('review');
 
 
 
@@ -154,7 +155,7 @@ async function run() {
         })
 
         // payment updated api order
-        app.patch('/orders/:id',verifyJWT, async (req, res) => {
+        app.patch('/orders/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             // console.log(id);
             const transaction = req.body;
@@ -166,7 +167,7 @@ async function run() {
                 }
             }
             const result = await paymentCollection.insertOne(transaction);
-            const updatedOrder= await orderCollection.updateOne(filter,updatedDoc);
+            const updatedOrder = await orderCollection.updateOne(filter, updatedDoc);
             res.send(updatedDoc);
         })
 
@@ -177,6 +178,15 @@ async function run() {
             const order = await orderCollection.findOne(query);
             // console.log(order);
             res.send(order);
+        })
+
+
+
+        // add review api
+        app.post('/review', async (req, res) => {
+            const review = req.body;
+            const result = await reviewCollection.insertOne(review);
+            res.send(result);
         })
 
     }
