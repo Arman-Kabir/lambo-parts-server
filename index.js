@@ -148,6 +148,7 @@ async function run() {
             }
 
         })
+
         // post order parts
         app.post('/orders', async (req, res) => {
             const orders = req.body;
@@ -201,6 +202,22 @@ async function run() {
             const profile = req.body;
             const result = await profileCollection.insertOne(profile);
             res.send(result);
+        })
+
+        // get profile of a specific user // 
+        app.get('/profile', verifyJWT, async (req, res) => {
+            const user = req.query.userEmail;
+            const decodedEmail = req.decoded.email;
+
+            if (user === decodedEmail) {
+                const query = { email: user };
+                const profile = await profileCollection.findOne(query);
+                return res.send(profile);
+            }
+            else {
+                return res.status(403).send({ message: 'forbidden access' });
+            }
+
         })
 
     }
