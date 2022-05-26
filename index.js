@@ -46,6 +46,7 @@ async function run() {
         const userCollection = client.db('lambo-parts').collection('users');
         const paymentCollection = client.db('lambo-parts').collection('payment');
         const reviewCollection = client.db('lambo-parts').collection('review');
+        const profileCollection = client.db('lambo-parts').collection('profile');
 
 
 
@@ -192,6 +193,14 @@ async function run() {
         app.get('/review', async (req, res) => {
             const review = await reviewCollection.find().toArray();
             res.send(review);
+        })
+
+
+        // add to my profile api
+        app.post('/profile', async (req, res) => {
+            const profile = req.body;
+            const result = await profileCollection.insertOne(profile);
+            res.send(result);
         })
 
     }
