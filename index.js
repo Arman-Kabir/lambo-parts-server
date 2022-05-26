@@ -134,6 +134,13 @@ async function run() {
             res.send(singleParts);
 
         })
+        // delete a parts // verifyjwt
+        app.delete('/parts/:id', async(req, res) => {
+            const id = req.params.id;
+            const query = {_id:ObjectId(id)};
+            const result = await partsCollection.deleteOne(query);
+            res.send(result);
+        })
 
 
 
